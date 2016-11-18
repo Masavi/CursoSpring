@@ -72,10 +72,30 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
         });
     }
 	
+	private void assignUsersToAdminRole() {
+        List<Role> roles = (List<Role>) roleService.listarTodos();
+        List<User> users = (List<User>) userService.listarTodos();
+
+        roles.forEach(role -> {
+            if (role.getRole().equalsIgnoreCase("ADMIN")) {
+                users.forEach(user -> {
+                    if (user.getUsername().equals("fglenanne")) {
+                        user.addRole(role);
+                        userService.guardarActualizar(user);
+                    }
+                });
+            }
+        });
+    }
+	
     private void loadRoles() {
-        Role role = new Role();
+    	Role role = new Role();
         role.setRole("CUSTOMER");
         roleService.guardarActualizar(role);
+
+        Role adminRole = new Role();
+        adminRole.setRole("ADMIN");
+        roleService.guardarActualizar(adminRole);
     }
 
     private void loadOrderHistory() {
