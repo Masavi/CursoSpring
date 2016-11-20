@@ -10,14 +10,23 @@ import org.springframework.stereotype.Service;
 import com.example.dominio.User;
 import com.example.repositorios.UserRepository;
 import com.example.servicios.UserService;
+import com.example.servicios.seguridad.EncryptionService;
+import com.example.repositorios.ConsumidorRepository;
 
 @Service
 @Profile("springdatajpa")
 public class UserServiceRepoImpl implements UserService {
 
 
-	UserRepository userRepository;
+	private UserRepository userRepository;
+    private ConsumidorRepository customerRepository;
+    private EncryptionService servicioEncriptacion;
 	
+    @Autowired
+	public void setServicioEncriptacion(EncryptionService servicioEncriptacion) {
+		this.servicioEncriptacion = servicioEncriptacion;
+	}
+
 	@Autowired
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -37,6 +46,9 @@ public class UserServiceRepoImpl implements UserService {
 
 	@Override
 	public User guardarActualizar(User domainObject) {
+		if(domainObject.getPassword() != null){
+			domainObject.setEncryptedPassword(servicioEncriptacion.encryptString(domainObject.getPassword()));
+		}
 		return userRepository.save(domainObject);
 	}
 
@@ -44,5 +56,10 @@ public class UserServiceRepoImpl implements UserService {
 	public void borrar(Integer id) {
 		userRepository.delete(id);
 	}
+	
+	@Override
+    public User findByUserName(String userName) {
+        return userRepository.findByUsername(userName);
+    }
 
 }
