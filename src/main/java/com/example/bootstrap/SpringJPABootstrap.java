@@ -56,6 +56,7 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
         loadOrderHistory();
         loadRoles();
         assignUsersToDefaultRole();
+        assignUsersToAdminRole();
 	}
 	
 	private void assignUsersToDefaultRole() {
